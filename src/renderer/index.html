@@ -1,0 +1,24 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div id="overlay">
+      <div id="waveform">
+        <canvas id="wave-canvas" width="180" height="40"></canvas>
+      </div>
+      <div id="controls">
+        <button id="pause-btn" title="Pause">⏸</button>
+        <button id="stop-btn" title="Stop">⏹</button>
+      </div>
+      <div id="status">Listening...</div>
+    </div>
+    <script src="app.js"></script>
+  </body>
+</html>
