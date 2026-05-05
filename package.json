@@ -1,0 +1,41 @@
+{
+  "name": "dictate-app",
+  "version": "0.1.0",
+  "description": "Push-to-talk voice dictation — speak and it types",
+  "main": "src/main/index.js",
+  "scripts": {
+    "start": "electron .",
+    "test": "jest",
+    "build": "electron-builder --win"
+  },
+  "dependencies": {
+    "dotenv": "^16.6.1",
+    "electron-store": "^10.1.0",
+    "groq-sdk": "^0.9.1",
+    "keysender": "^2.4.0",
+    "uiohook-napi": "^1.5.4"
+  },
+  "devDependencies": {
+    "electron": "^34.0.0",
+    "electron-builder": "^24.13.3",
+    "jest": "^29.7.0"
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "testMatch": [
+      "**/tests/**/*.test.js"
+    ]
+  },
+  "build": {
+    "appId": "app.dictate",
+    "productName": "dictate.app",
+    "win": {
+      "target": "nsis",
+      "icon": "assets/icon.ico"
+    },
+    "nsis": {
+      "oneClick": true,
+      "installerHeaderIcon": "assets/icon.ico"
+    }
+  }
+}
