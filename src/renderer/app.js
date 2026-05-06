@@ -5,11 +5,44 @@ let audioChunks = [];
 let analyser = null;
 let animFrame = null;
 let paused = false;
+let audioContext = null;
+let recordingUndone = false;
 const canvas = document.getElementById("wave-canvas");
 const ctx = canvas.getContext("2d");
 const statusEl = document.getElementById("status");
+const undoPopup = document.getElementById("undo-popup");
+
+function generatePopSound() {
+  try {
+    if (!audioContext) {
+      audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    }
+
+    const now = audioContext.currentTime;
+    const duration = 0.12;
+
+    const osc = audioContext.createOscillator();
+    const gain = audioContext.createGain();
+
+    osc.connect(gain);
+    gain.connect(audioContext.destination);
+
+    osc.frequency.setValueAtTime(850, now);
+    osc.frequency.exponentialRampToValueAtTime(180, now + duration);
+
+    gain.gain.setValueAtTime(0.35, now);
+    gain.gain.exponentialRampToValueAtTime(0.01, now + duration);
+
+    osc.start(now);
+    osc.stop(now + duration);
+  } catch (e) {
+    console.error("Pop sound generation error:", e);
+  }
+}
 
 async function startRecording() {
+  generatePopSound();
+
   const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
 
   const audioCtx = new AudioContext();
@@ -28,6 +61,7 @@ async function startRecording() {
   mediaRecorder.start();
 
   statusEl.textContent = "Listening...";
+  recordingUndone = false;
 }
 
 function drawWaveform() {
@@ -68,6 +102,7 @@ async function sendAudioForTranscription() {
 
 function stopRecording() {
   if (mediaRecorder && mediaRecorder.state !== "inactive") {
+    generatePopSound();
     mediaRecorder.stop();
     mediaRecorder.stream.getTracks().forEach((t) => t.stop());
   }
@@ -89,8 +124,51 @@ function togglePause() {
 document.getElementById("pause-btn").addEventListener("click", togglePause);
 document.getElementById("stop-btn").addEventListener("click", stopRecording);
 
-ipcRenderer.on("start-recording", () => startRecording());
-ipcRenderer.on("stop-recording", () => stopRecording());
+document.addEventListener("keydown", (e) => {
+  if (
+    e.key === "Escape" &&
+    mediaRecorder &&
+    mediaRecorder.state !== "inactive"
+  ) {
+    e.preventDefault();
+    stopRecording();
+    recordingUndone = true;
+    showUndoPopup();
+  }
+});
+
+function showUndoPopup() {
+  undoPopup.classList.add("show");
+  undoPopup.classList.remove("fade-out");
+
+  const timeout = setTimeout(() => {
+    hideUndoPopup();
+  }, 2500);
+
+  const clickHandler = () => {
+    clearTimeout(timeout);
+    hideUndoPopup();
+    startRecording();
+    undoPopup.removeEventListener("click", clickHandler);
+  };
+
+  undoPopup.addEventListener("click", clickHandler);
+}
+
+function hideUndoPopup() {
+  undoPopup.classList.add("fade-out");
+  setTimeout(() => {
+    undoPopup.classList.remove("show", "fade-out");
+  }, 300);
+}
+
+ipcRenderer.on("start-recording", () => {
+  startRecording();
+});
+
+ipcRenderer.on("stop-recording", () => {
+  stopRecording();
+});
 
 ipcRenderer.on("transcription-done", () => {
   document.body.classList.remove("processing");

@@ -42,8 +42,54 @@ body {
   50% {
     box-shadow:
       0 0 0 1px rgba(80, 120, 255, 0.35),
-      0 8px 32px rgba(0, 0, 0, 0.6),
-      0 0 30px rgba(80, 120, 255, 0.18);
+      0 8px 32px rgba(0, 0, 0, 0.7),
+      0 0 40px rgba(80, 120, 255, 0.25);
+  }
+}
+
+@keyframes waveform-pulse {
+  0%,
+  100% {
+    transform: scaleY(0.85);
+    opacity: 0.6;
+  }
+  50% {
+    transform: scaleY(1);
+    opacity: 1;
+  }
+}
+
+@keyframes button-press {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(0.92);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -40px);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+}
+
+@keyframes fade-out {
+  from {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+  to {
+    opacity: 0;
+    transform: translate(-50%, -40px);
   }
 }
 
@@ -76,18 +122,48 @@ body {
   justify-content: center;
   transition:
     background 0.15s,
-    color 0.15s;
+    color 0.15s,
+    border-color 0.15s,
+    box-shadow 0.15s;
 }
 
 #controls button:hover {
   background: rgba(255, 255, 255, 0.14);
   color: #fff;
+  box-shadow: 0 0 8px rgba(255, 255, 255, 0.1);
+}
+
+#controls button:active {
+  animation: button-press 0.15s ease-out;
+}
+
+#pause-btn:hover {
+  background: rgba(100, 160, 255, 0.25);
+  border-color: rgba(100, 160, 255, 0.5);
+  color: #8ab4ff;
+  box-shadow: 0 0 12px rgba(100, 160, 255, 0.25);
+}
+
+#stop-btn {
+  background: rgba(220, 50, 50, 0.4);
+  border-color: rgba(220, 50, 50, 0.6);
+  color: #ff6b6b;
 }
 
 #stop-btn:hover {
-  background: rgba(255, 60, 60, 0.25);
-  border-color: rgba(255, 60, 60, 0.4);
-  color: #ff6060;
+  background: rgba(220, 50, 50, 0.65);
+  border-color: rgba(220, 50, 50, 0.8);
+  color: #ff8888;
+  box-shadow:
+    0 0 16px rgba(220, 50, 50, 0.5),
+    inset 0 0 8px rgba(255, 255, 255, 0.1);
+}
+
+#stop-btn:active {
+  animation: button-press 0.15s ease-out;
+  box-shadow:
+    0 0 12px rgba(220, 50, 50, 0.4),
+    inset 0 0 4px rgba(0, 0, 0, 0.3);
 }
 
 #status {
@@ -104,4 +180,45 @@ body.processing #overlay {
     0 0 0 1px rgba(255, 200, 60, 0.2),
     0 8px 32px rgba(0, 0, 0, 0.6),
     0 0 20px rgba(255, 200, 60, 0.08);
+}
+
+#undo-popup {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(80, 140, 255, 0.95);
+  color: #fff;
+  padding: 20px 36px;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  user-select: none;
+  box-shadow:
+    0 8px 32px rgba(80, 140, 255, 0.3),
+    inset 0 1px 2px rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  display: none;
+  z-index: 1000;
+  transition: all 0.15s;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+#undo-popup.show {
+  display: block;
+  animation: fade-in 0.3s ease-out;
+}
+
+#undo-popup:hover {
+  background: rgba(100, 160, 255, 0.98);
+  box-shadow:
+    0 12px 40px rgba(80, 140, 255, 0.4),
+    inset 0 1px 2px rgba(255, 255, 255, 0.2);
+  transform: translate(-50%, -50%) scale(1.05);
+}
+
+#undo-popup.fade-out {
+  animation: fade-out 0.3s ease-out forwards;
 }
