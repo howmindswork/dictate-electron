@@ -33,6 +33,7 @@ let overlayWindow = null;
 let isRecording = false;
 let tray = null;
 let settingsWindow = null;
+let onboardingWindow = null;
 let idleIcon = null;
 let recordingIcon = null;
 let processingIcon = null;
@@ -264,9 +265,9 @@ ipcMain.on("audio-ready", async (event, arrayBuffer) => {
         if (count === 10 && !store.get("nudge10Shown")) {
           store.set("nudge10Shown", true);
           tray.displayBalloon({
-            title: "dictate.app is working for you",
+            title: "dictate.app — loving it?",
             content:
-              "You've dictated 10 times this trial. Upgrade to Pro to keep it going after day 7.",
+              "You've dictated 10 times. Upgrade to Pro and keep it going. $9/mo.",
             iconType: "info",
           });
         } else if (count === 20 && !store.get("nudge20Shown")) {
@@ -501,8 +502,27 @@ app.whenReady().then(async () => {
   );
   tray = new Tray(idleIcon);
 
-  const buildTrayMenu = () =>
-    Menu.buildFromTemplate([
+  const buildTrayMenu = () => {
+    const installDate = store.get("installDate");
+    const prefs = store.get("preferences") || {};
+    const hasPaid = !!prefs.licenseKey;
+    const msElapsed = Date.now() - new Date(installDate).getTime();
+    const daysElapsed = msElapsed / (1000 * 60 * 60 * 24);
+    const showUpgradeCTA =
+      !hasPaid && isTrialActive(new Date(installDate)) && daysElapsed >= 4;
+
+    const upgradeItems = showUpgradeCTA
+      ? [
+          {
+            label: "⭐ Upgrade to Pro — $9/mo",
+            click: () => shell.openExternal(STRIPE_CHECKOUT_URL),
+          },
+          { type: "separator" },
+        ]
+      : [];
+
+    return Menu.buildFromTemplate([
+      ...upgradeItems,
       { label: "dictate.app", enabled: false },
       { type: "separator" },
       { label: "Open Settings", click: () => createSettingsWindow() },
@@ -543,6 +563,7 @@ app.whenReady().then(async () => {
         },
       },
     ]);
+  };
   tray.setContextMenu(buildTrayMenu());
   // Double-click tray icon opens settings
   tray.on("double-click", () => createSettingsWindow());
