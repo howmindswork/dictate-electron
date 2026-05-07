@@ -171,6 +171,23 @@ function updateTrayTooltip() {
   }
 }
 
+function startRecording() {
+  isRecording = true;
+  if (tray && recordingIcon) tray.setImage(recordingIcon);
+  const win = createOverlay();
+  win.webContents.on("did-finish-load", () => {
+    win.webContents.send("start-recording");
+  });
+}
+
+function stopRecording() {
+  isRecording = false;
+  if (tray && processingIcon) tray.setImage(processingIcon);
+  if (overlayWindow && !overlayWindow.isDestroyed()) {
+    overlayWindow.webContents.send("stop-recording");
+  }
+}
+
 function toggleRecording() {
   const installDate = store.get("installDate");
   const prefs = store.get("preferences") || {};
@@ -188,19 +205,15 @@ function toggleRecording() {
     return;
   }
 
+  const currentPrefs = store.get("preferences") || {};
+
+  // Hands-free mode and push-to-talk both use toggle behavior via globalShortcut.
+  // The difference: push-to-talk fires on keydown only (no hold detection here),
+  // hands-free mode simply keeps the same press-to-start / press-to-stop toggle.
   if (!isRecording) {
-    isRecording = true;
-    if (tray && recordingIcon) tray.setImage(recordingIcon);
-    const win = createOverlay();
-    win.webContents.on("did-finish-load", () => {
-      win.webContents.send("start-recording");
-    });
+    startRecording();
   } else {
-    isRecording = false;
-    if (tray && processingIcon) tray.setImage(processingIcon);
-    if (overlayWindow && !overlayWindow.isDestroyed()) {
-      overlayWindow.webContents.send("stop-recording");
-    }
+    stopRecording();
   }
 }
 
@@ -231,6 +244,13 @@ ipcMain.on("audio-ready", async (event, arrayBuffer) => {
         await injectText(text);
       } else {
         clipboard.writeText(text);
+        if (tray && tray.displayBalloon) {
+          tray.displayBalloon({
+            title: "dictate.app",
+            content: "Text copied to clipboard",
+            iconType: "info",
+          });
+        }
       }
 
       // Store transcription in history
@@ -294,12 +314,6 @@ ipcMain.on("audio-ready", async (event, arrayBuffer) => {
     if (tray && idleIcon) tray.setImage(idleIcon);
     overlayWindow = null;
     isRecording = false;
-
-    // Hands-free mode: auto-restart recording after a short pause
-    const prefsForHandsFree = store.get("preferences") || {};
-    if (prefsForHandsFree.handsFreeModeEnabled) {
-      setTimeout(() => toggleRecording(), 500);
-    }
   }
 });
 
