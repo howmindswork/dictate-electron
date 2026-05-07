@@ -21,6 +21,4 @@ files:
   - node_modules/**/*
   - package.json
 
-extraResources:
-  - from: ".env"
-    to: ".env"
+# No extraResources — never bundle .env or secrets into the installer

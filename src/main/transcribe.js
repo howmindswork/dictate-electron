@@ -1,11 +1,12 @@
-require("dotenv").config();
 const Groq = require("groq-sdk");
 const fs = require("fs");
 const path = require("path");
 const os = require("os");
 
 function buildGroqClient(apiKey) {
-  return new Groq({ apiKey: apiKey || process.env.GROQ_API_KEY });
+  if (!apiKey)
+    throw new Error("No Groq API key. Add yours in Settings → API Key.");
+  return new Groq({ apiKey });
 }
 
 async function transcribeAudioBuffer(audioBuffer, apiKey) {

@@ -1,4 +1,4 @@
-const TRIAL_DAYS = 30;
+const TRIAL_DAYS = 7;
 const OWNER_KEYS = ["DICTATE-OWNER-2026", "HMW-ADMIN-FOREVER"];
 
 function isOwnerKey(key) {
@@ -18,10 +18,29 @@ function daysLeft(installDate) {
   return Math.max(0, remaining);
 }
 
+const TRIAL_WORKER_URL =
+  "https://trial-worker.howmindswork.workers.dev/api/check-trial";
+
+async function checkRemoteTrial(fingerprint) {
+  try {
+    const res = await fetch(TRIAL_WORKER_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ fingerprint }),
+      signal: AbortSignal.timeout(5000),
+    });
+    if (!res.ok) return null;
+    return await res.json();
+  } catch {
+    return null;
+  }
+}
+
 module.exports = {
   isTrialActive,
   daysLeft,
   TRIAL_DAYS,
   isOwnerKey,
   OWNER_KEYS,
+  checkRemoteTrial,
 };

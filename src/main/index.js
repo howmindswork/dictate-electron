@@ -12,7 +12,8 @@ const {
 } = require("electron");
 const path = require("path");
 const Store = require("electron-store");
-const { isTrialActive, isOwnerKey } = require("./trial");
+const { isTrialActive, isOwnerKey, checkRemoteTrial } = require("./trial");
+const { getMachineId } = require("./fingerprint");
 const { transcribeAudioBuffer } = require("./transcribe");
 const { injectText } = require("./inject");
 const {
@@ -354,7 +355,7 @@ ipcMain.on("save-api-key", (event, key) => {
   store.set("preferences", prefs);
 });
 
-const STRIPE_CHECKOUT_URL = "https://buy.stripe.com/8x2aEX7ree937fw6A3dwc0l";
+const STRIPE_CHECKOUT_URL = "https://buy.stripe.com/8x24gz3aY5Cx6bs7E7dwc0M";
 
 ipcMain.on("open-account-page", () => {
   shell.openExternal(STRIPE_CHECKOUT_URL);
@@ -397,11 +398,22 @@ ipcMain.on("validate-license-key", (event, key) => {
   event.reply("license-key-validated", { valid, owner });
 });
 
-app.whenReady().then(() => {
-  const iconPath = path.join(__dirname, "../../assets/app-icon.png");
-  const icon = nativeImage
-    .createFromPath(iconPath)
-    .resize({ width: 16, height: 16 });
+app.whenReady().then(async () => {
+  try {
+    const fingerprint = getMachineId();
+    const remote = await checkRemoteTrial(fingerprint);
+    if (remote && remote.expired) {
+      store.set(
+        "installDate",
+        new Date(Date.now() - 8 * 24 * 60 * 60 * 1000).toISOString(),
+      );
+    }
+  } catch {
+    // network failure — fall through to local trial
+  }
+
+  const iconPath = path.join(__dirname, "../../assets/tray-icon.png");
+  const icon = nativeImage.createFromPath(iconPath);
   tray = new Tray(icon);
 
   const buildTrayMenu = () =>
