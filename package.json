@@ -10,10 +10,8 @@
   },
   "dependencies": {
     "dotenv": "^16.6.1",
-    "electron-store": "^10.1.0",
-    "groq-sdk": "^0.9.1",
-    "keysender": "^2.4.0",
-    "uiohook-napi": "^1.5.4"
+    "electron-store": "^8.2.0",
+    "groq-sdk": "^0.9.1"
   },
   "devDependencies": {
     "electron": "^34.0.0",

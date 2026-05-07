@@ -1,4 +1,9 @@
-const TRIAL_DAYS = 14;
+const TRIAL_DAYS = 30;
+const OWNER_KEYS = ["DICTATE-OWNER-2026", "HMW-ADMIN-FOREVER"];
+
+function isOwnerKey(key) {
+  return OWNER_KEYS.includes(key);
+}
 
 function isTrialActive(installDate) {
   const msElapsed = Date.now() - new Date(installDate).getTime();
@@ -13,4 +18,10 @@ function daysLeft(installDate) {
   return Math.max(0, remaining);
 }
 
-module.exports = { isTrialActive, daysLeft, TRIAL_DAYS };
+module.exports = {
+  isTrialActive,
+  daysLeft,
+  TRIAL_DAYS,
+  isOwnerKey,
+  OWNER_KEYS,
+};

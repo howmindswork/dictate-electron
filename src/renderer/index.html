@@ -9,17 +9,98 @@
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
-    <div id="overlay">
-      <div id="waveform">
-        <canvas id="wave-canvas" width="180" height="40"></canvas>
+    <div id="app">
+      <!-- recording-container: full-width flex row, slides up from bottom -->
+      <div
+        id="recording-container"
+        class="recording-container bottom-indicator"
+      >
+        <!-- Pause — sits outside the pill, left side -->
+        <button id="pause-btn" class="pause-recording-btn" title="Pause">
+          <svg
+            id="pause-icon"
+            width="11"
+            height="11"
+            viewBox="0 0 16 16"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <rect
+              x="4"
+              y="3"
+              width="3"
+              height="10"
+              rx="1"
+              fill="currentColor"
+            />
+            <rect
+              x="9"
+              y="3"
+              width="3"
+              height="10"
+              rx="1"
+              fill="currentColor"
+            />
+          </svg>
+          <svg
+            id="resume-icon"
+            width="11"
+            height="11"
+            viewBox="0 0 16 16"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+            style="display: none"
+          >
+            <path d="M4 3L12 8L4 13V3Z" fill="currentColor" />
+          </svg>
+        </button>
+
+        <!-- The pill — expands with waveform -->
+        <div id="recording-bar" class="recording-bar recording">
+          <canvas id="waveform" class="waveform-canvas"></canvas>
+          <svg
+            id="processing-logo"
+            class="processing-logo"
+            style="display: none"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <rect x="9" y="2" width="6" height="11" rx="3" />
+            <path d="M5 10a7 7 0 0 0 14 0" />
+            <line x1="12" y1="19" x2="12" y2="22" />
+            <line x1="8" y1="22" x2="16" y2="22" />
+          </svg>
+        </div>
+
+        <!-- Stop — sits outside the pill, right side -->
+        <button id="stop-btn" class="stop-recording-btn" title="Stop">
+          <svg
+            width="11"
+            height="11"
+            viewBox="0 0 16 16"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <rect
+              x="3"
+              y="3"
+              width="10"
+              height="10"
+              rx="2"
+              fill="currentColor"
+            />
+          </svg>
+        </button>
       </div>
-      <div id="controls">
-        <button id="pause-btn" title="Pause">⏸</button>
-        <button id="stop-btn" title="Stop">⏹</button>
-      </div>
-      <div id="status">Listening...</div>
     </div>
+
+    <!-- Undo popup -->
     <div id="undo-popup">↶ Undo</div>
+
     <script src="app.js"></script>
   </body>
 </html>
