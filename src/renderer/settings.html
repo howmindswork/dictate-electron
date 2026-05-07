@@ -844,8 +844,21 @@
       <!-- DASHBOARD -->
       <div class="panel active" id="panel-overview">
         <div class="panel-title">Dashboard</div>
-        <div id="trial-banner" style="display:none;margin-bottom:16px;padding:12px 16px;border-radius:10px;background:rgba(192,132,252,0.1);border:1px solid rgba(192,132,252,0.3);font-size:12px;color:var(--text-muted);line-height:1.6;">
-          <strong style="color:var(--accent);" id="trial-days-text"></strong>
+        <div
+          id="trial-banner"
+          style="
+            display: none;
+            margin-bottom: 16px;
+            padding: 12px 16px;
+            border-radius: 10px;
+            background: rgba(192, 132, 252, 0.1);
+            border: 1px solid rgba(192, 132, 252, 0.3);
+            font-size: 12px;
+            color: var(--text-muted);
+            line-height: 1.6;
+          "
+        >
+          <strong style="color: var(--accent)" id="trial-days-text"></strong>
         </div>
         <div id="stats-grid">
           <div class="stat-card">
@@ -1080,59 +1093,656 @@
 
         <!-- Active provider: Groq -->
         <div class="pref-section">
-          <div class="pref-section-title" style="display:flex;align-items:center;gap:8px;">
+          <div
+            class="pref-section-title"
+            style="display: flex; align-items: center; gap: 8px"
+          >
             Groq
-            <span style="font-size:10px;background:rgba(192,132,252,0.15);color:var(--accent);border:1px solid rgba(192,132,252,0.3);border-radius:4px;padding:2px 8px;font-weight:700;letter-spacing:0.5px;">ACTIVE</span>
+            <span
+              style="
+                font-size: 10px;
+                background: rgba(192, 132, 252, 0.15);
+                color: var(--accent);
+                border: 1px solid rgba(192, 132, 252, 0.3);
+                border-radius: 4px;
+                padding: 2px 8px;
+                font-weight: 700;
+                letter-spacing: 0.5px;
+              "
+              >ACTIVE</span
+            >
           </div>
-          <p style="font-size:12px;color:var(--text-muted);margin-bottom:16px;line-height:1.7;">Whisper large-v3-turbo &mdash; fastest transcription on the market. Free to start.</p>
+          <p
+            style="
+              font-size: 12px;
+              color: var(--text-muted);
+              margin-bottom: 16px;
+              line-height: 1.7;
+            "
+          >
+            Whisper large-v3-turbo &mdash; fastest transcription on the market.
+            Free to start.
+          </p>
 
           <!-- Step-by-step -->
-          <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:16px;">
-            <div style="display:flex;gap:12px;align-items:flex-start;padding:12px 14px;background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:10px;">
-              <div style="min-width:22px;height:22px;border-radius:50%;background:rgba(192,132,252,0.2);border:1px solid rgba(192,132,252,0.4);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:var(--accent);">1</div>
-              <div style="font-size:12px;color:var(--text-muted);line-height:1.6;">Go to <a href="#" onclick="require('electron').shell.openExternal('https://console.groq.com/keys');return false;" style="color:var(--accent);text-decoration:none;font-weight:600;">console.groq.com/keys</a> and sign up free.</div>
+          <div
+            style="
+              display: flex;
+              flex-direction: column;
+              gap: 10px;
+              margin-bottom: 16px;
+            "
+          >
+            <div
+              style="
+                display: flex;
+                gap: 12px;
+                align-items: flex-start;
+                padding: 12px 14px;
+                background: rgba(255, 255, 255, 0.03);
+                border: 1px solid var(--border);
+                border-radius: 10px;
+              "
+            >
+              <div
+                style="
+                  min-width: 22px;
+                  height: 22px;
+                  border-radius: 50%;
+                  background: rgba(192, 132, 252, 0.2);
+                  border: 1px solid rgba(192, 132, 252, 0.4);
+                  display: flex;
+                  align-items: center;
+                  justify-content: center;
+                  font-size: 11px;
+                  font-weight: 700;
+                  color: var(--accent);
+                "
+              >
+                1
+              </div>
+              <div
+                style="
+                  font-size: 12px;
+                  color: var(--text-muted);
+                  line-height: 1.6;
+                "
+              >
+                Go to
+                <a
+                  href="#"
+                  onclick="
+                    require('electron').shell.openExternal(
+                      'https://console.groq.com/keys',
+                    );
+                    return false;
+                  "
+                  style="
+                    color: var(--accent);
+                    text-decoration: none;
+                    font-weight: 600;
+                  "
+                  >console.groq.com/keys</a
+                >
+                and sign up free.
+              </div>
             </div>
-            <div style="display:flex;gap:12px;align-items:flex-start;padding:12px 14px;background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:10px;">
-              <div style="min-width:22px;height:22px;border-radius:50%;background:rgba(192,132,252,0.2);border:1px solid rgba(192,132,252,0.4);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:var(--accent);">2</div>
-              <div style="font-size:12px;color:var(--text-muted);line-height:1.6;">Click <strong style="color:var(--text);">Create API Key</strong> &rarr; copy the key starting with <code style="background:rgba(255,255,255,0.07);padding:1px 5px;border-radius:4px;font-size:11px;">gsk_</code></div>
+            <div
+              style="
+                display: flex;
+                gap: 12px;
+                align-items: flex-start;
+                padding: 12px 14px;
+                background: rgba(255, 255, 255, 0.03);
+                border: 1px solid var(--border);
+                border-radius: 10px;
+              "
+            >
+              <div
+                style="
+                  min-width: 22px;
+                  height: 22px;
+                  border-radius: 50%;
+                  background: rgba(192, 132, 252, 0.2);
+                  border: 1px solid rgba(192, 132, 252, 0.4);
+                  display: flex;
+                  align-items: center;
+                  justify-content: center;
+                  font-size: 11px;
+                  font-weight: 700;
+                  color: var(--accent);
+                "
+              >
+                2
+              </div>
+              <div
+                style="
+                  font-size: 12px;
+                  color: var(--text-muted);
+                  line-height: 1.6;
+                "
+              >
+                Click
+                <strong style="color: var(--text)">Create API Key</strong>
+                &rarr; copy the key starting with
+                <code
+                  style="
+                    background: rgba(255, 255, 255, 0.07);
+                    padding: 1px 5px;
+                    border-radius: 4px;
+                    font-size: 11px;
+                  "
+                  >gsk_</code
+                >
+              </div>
             </div>
-            <div style="display:flex;gap:12px;align-items:flex-start;padding:12px 14px;background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:10px;">
-              <div style="min-width:22px;height:22px;border-radius:50%;background:rgba(192,132,252,0.2);border:1px solid rgba(192,132,252,0.4);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:var(--accent);">3</div>
-              <div style="font-size:12px;color:var(--text-muted);line-height:1.6;">Paste it below and hit <strong style="color:var(--text);">Save</strong>. Done.</div>
+            <div
+              style="
+                display: flex;
+                gap: 12px;
+                align-items: flex-start;
+                padding: 12px 14px;
+                background: rgba(255, 255, 255, 0.03);
+                border: 1px solid var(--border);
+                border-radius: 10px;
+              "
+            >
+              <div
+                style="
+                  min-width: 22px;
+                  height: 22px;
+                  border-radius: 50%;
+                  background: rgba(192, 132, 252, 0.2);
+                  border: 1px solid rgba(192, 132, 252, 0.4);
+                  display: flex;
+                  align-items: center;
+                  justify-content: center;
+                  font-size: 11px;
+                  font-weight: 700;
+                  color: var(--accent);
+                "
+              >
+                3
+              </div>
+              <div
+                style="
+                  font-size: 12px;
+                  color: var(--text-muted);
+                  line-height: 1.6;
+                "
+              >
+                Paste it below and hit
+                <strong style="color: var(--text)">Save</strong>. Done.
+              </div>
             </div>
           </div>
 
           <div class="hotkey-row">
-            <input type="password" id="groq-api-key" placeholder="gsk_..." style="flex:1;background:rgba(255,255,255,0.06);border:1px solid var(--border);border-radius:8px;padding:9px 14px;color:var(--text);font-size:13px;font-family:inherit;outline:none;" />
-            <button class="btn-primary" id="save-api-key-btn">Save</button><button class="btn-primary" id="test-api-key-btn" style="background:rgba(255,255,255,0.07);margin-left:6px;">Test</button>
+            <input
+              type="password"
+              id="groq-api-key"
+              placeholder="gsk_..."
+              style="
+                flex: 1;
+                background: rgba(255, 255, 255, 0.06);
+                border: 1px solid var(--border);
+                border-radius: 8px;
+                padding: 9px 14px;
+                color: var(--text);
+                font-size: 13px;
+                font-family: inherit;
+                outline: none;
+              "
+            />
+            <button class="btn-primary" id="save-api-key-btn">Save</button
+            ><button
+              class="btn-primary"
+              id="test-api-key-btn"
+              style="background: rgba(255, 255, 255, 0.07); margin-left: 6px"
+            >
+              Test
+            </button>
           </div>
-          <div id="api-key-status" style="font-size:11px;margin-top:8px;color:var(--text-muted);display:none;"></div>
+          <div
+            id="api-key-status"
+            style="
+              font-size: 11px;
+              margin-top: 8px;
+              color: var(--text-muted);
+              display: none;
+            "
+          ></div>
         </div>
 
         <!-- Other providers -->
         <div class="pref-section">
           <div class="pref-section-title">Other Providers</div>
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:4px;">
-            <div style="padding:12px 14px;background:rgba(255,255,255,0.025);border:1px solid var(--border);border-radius:10px;opacity:0.55;cursor:default;">
-              <div style="font-size:12px;font-weight:600;color:var(--text);margin-bottom:2px;">OpenAI Whisper</div>
-              <div style="font-size:11px;color:var(--text-muted);">Coming soon</div>
+          <div
+            style="
+              display: grid;
+              grid-template-columns: 1fr 1fr;
+              gap: 8px;
+              margin-top: 4px;
+            "
+          >
+            <div
+              style="
+                padding: 12px 14px;
+                background: rgba(255, 255, 255, 0.025);
+                border: 1px solid var(--border);
+                border-radius: 10px;
+                opacity: 0.55;
+                cursor: default;
+              "
+            >
+              <div
+                style="
+                  font-size: 12px;
+                  font-weight: 600;
+                  color: var(--text);
+                  margin-bottom: 2px;
+                "
+              >
+                OpenAI Whisper
+              </div>
+              <div style="font-size: 11px; color: var(--text-muted)">
+                Coming soon
+              </div>
             </div>
-            <div style="padding:12px 14px;background:rgba(255,255,255,0.025);border:1px solid var(--border);border-radius:10px;opacity:0.55;cursor:default;">
-              <div style="font-size:12px;font-weight:600;color:var(--text);margin-bottom:2px;">Google Speech</div>
-              <div style="font-size:11px;color:var(--text-muted);">Coming soon</div>
+            <div
+              style="
+                padding: 12px 14px;
+                background: rgba(255, 255, 255, 0.025);
+                border: 1px solid var(--border);
+                border-radius: 10px;
+                opacity: 0.55;
+                cursor: default;
+              "
+            >
+              <div
+                style="
+                  font-size: 12px;
+                  font-weight: 600;
+                  color: var(--text);
+                  margin-bottom: 2px;
+                "
+              >
+                Google Speech
+              </div>
+              <div style="font-size: 11px; color: var(--text-muted)">
+                Coming soon
+              </div>
             </div>
-            <div style="padding:12px 14px;background:rgba(255,255,255,0.025);border:1px solid var(--border);border-radius:10px;opacity:0.55;cursor:default;">
-              <div style="font-size:12px;font-weight:600;color:var(--text);margin-bottom:2px;">Azure Speech</div>
-              <div style="font-size:11px;color:var(--text-muted);">Coming soon</div>
+            <div
+              style="
+                padding: 12px 14px;
+                background: rgba(255, 255, 255, 0.025);
+                border: 1px solid var(--border);
+                border-radius: 10px;
+                opacity: 0.55;
+                cursor: default;
+              "
+            >
+              <div
+                style="
+                  font-size: 12px;
+                  font-weight: 600;
+                  color: var(--text);
+                  margin-bottom: 2px;
+                "
+              >
+                Azure Speech
+              </div>
+              <div style="font-size: 11px; color: var(--text-muted)">
+                Coming soon
+              </div>
             </div>
-            <div style="padding:12px 14px;background:rgba(255,255,255,0.025);border:1px solid var(--border);border-radius:10px;opacity:0.55;cursor:default;">
-              <div style="font-size:12px;font-weight:600;color:var(--text);margin-bottom:2px;">Anthropic</div>
-              <div style="font-size:11px;color:var(--text-muted);">Coming soon</div>
+            <div
+              style="
+                padding: 12px 14px;
+                background: rgba(255, 255, 255, 0.025);
+                border: 1px solid var(--border);
+                border-radius: 10px;
+                opacity: 0.55;
+                cursor: default;
+              "
+            >
+              <div
+                style="
+                  font-size: 12px;
+                  font-weight: 600;
+                  color: var(--text);
+                  margin-bottom: 2px;
+                "
+              >
+                Anthropic
+              </div>
+              <div style="font-size: 11px; color: var(--text-muted)">
+                Coming soon
+              </div>
             </div>
           </div>
         </div>
       </div>
     </div>
+
+    <!-- ONBOARDING OVERLAY -->
+    <div id="onboarding-overlay" style="display: none">
+      <!-- Step 1: Welcome -->
+      <div id="ob-step-1" class="ob-step">
+        <div class="ob-card">
+          <div class="ob-icon-wrap">
+            <svg
+              width="40"
+              height="40"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="#c084fc"
+              stroke-width="1.5"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <rect x="9" y="2" width="6" height="11" rx="3" />
+              <path d="M5 10a7 7 0 0 0 14 0" />
+              <line x1="12" y1="19" x2="12" y2="22" />
+              <line x1="8" y1="22" x2="16" y2="22" />
+            </svg>
+          </div>
+          <h1 class="ob-headline">You're 60 seconds from hands-free typing</h1>
+          <p class="ob-subtext">
+            One hotkey. Speak. Text appears anywhere on your screen.
+          </p>
+          <button class="ob-btn-primary" id="ob-step1-next">
+            Set My Hotkey →
+          </button>
+          <p class="ob-fine">7-day free trial · No account needed</p>
+        </div>
+      </div>
+
+      <!-- Step 2: Hotkey confirmation -->
+      <div id="ob-step-2" class="ob-step" style="display: none">
+        <div class="ob-card">
+          <div class="ob-icon-wrap">
+            <svg
+              width="40"
+              height="40"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="#c084fc"
+              stroke-width="1.5"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <rect x="2" y="6" width="20" height="12" rx="2" />
+              <path d="M6 10h.01M10 10h.01M14 10h.01M18 10h.01M6 14h12" />
+            </svg>
+          </div>
+          <h1 class="ob-headline">Your hotkey is ready</h1>
+          <div class="ob-hotkey-pill" id="ob-hotkey-label">
+            <span class="ob-key">Ctrl</span>
+            <span class="ob-key-sep">+</span>
+            <span class="ob-key">Space</span>
+          </div>
+          <p class="ob-subtext">
+            Press it anywhere on Windows to start dictating
+          </p>
+          <button class="ob-btn-primary" id="ob-step2-next">
+            Try It Now →
+          </button>
+          <a href="#" class="ob-skip" id="ob-skip">I'll try it later</a>
+        </div>
+      </div>
+
+      <!-- Step 3: First dictation prompt -->
+      <div id="ob-step-3" class="ob-step" style="display: none">
+        <div class="ob-card">
+          <div class="ob-mic-wrap">
+            <div class="ob-mic-pulse"></div>
+            <div class="ob-mic-pulse ob-pulse-2"></div>
+            <div class="ob-mic-inner">
+              <svg
+                width="36"
+                height="36"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="#c084fc"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <rect x="9" y="2" width="6" height="11" rx="3" />
+                <path d="M5 10a7 7 0 0 0 14 0" />
+                <line x1="12" y1="19" x2="12" y2="22" />
+                <line x1="8" y1="22" x2="16" y2="22" />
+              </svg>
+            </div>
+          </div>
+          <h1 class="ob-headline">Press Ctrl+Space now</h1>
+          <p class="ob-subtext">Speak anything. Watch it appear.</p>
+        </div>
+      </div>
+
+      <!-- Step 4: Success -->
+      <div id="ob-step-success" class="ob-step" style="display: none">
+        <div class="ob-card">
+          <div
+            class="ob-icon-wrap"
+            style="background: rgba(192, 132, 252, 0.2)"
+          >
+            <svg
+              width="40"
+              height="40"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="#c084fc"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <polyline points="20 6 9 17 4 12" />
+            </svg>
+          </div>
+          <h1 class="ob-headline">You did it.</h1>
+          <p class="ob-subtext">
+            Dictation is live. Use Ctrl+Space anytime, anywhere.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <style>
+      #onboarding-overlay {
+        position: fixed;
+        inset: 0;
+        z-index: 1000;
+        background: rgba(10, 10, 20, 0.97);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .ob-step {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        animation: obFadeIn 0.25s ease-out both;
+      }
+
+      @keyframes obFadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(12px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .ob-card {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        max-width: 400px;
+        width: 100%;
+        padding: 0 24px;
+      }
+
+      .ob-icon-wrap {
+        width: 76px;
+        height: 76px;
+        border-radius: 50%;
+        background: rgba(192, 132, 252, 0.12);
+        border: 1px solid rgba(192, 132, 252, 0.25);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 28px;
+      }
+
+      .ob-headline {
+        font-size: 24px;
+        font-weight: 700;
+        color: #e2d9f3;
+        letter-spacing: -0.03em;
+        line-height: 1.2;
+        margin-bottom: 12px;
+      }
+
+      .ob-subtext {
+        font-size: 14px;
+        color: rgba(226, 217, 243, 0.6);
+        line-height: 1.6;
+        margin-bottom: 28px;
+        max-width: 300px;
+      }
+
+      .ob-hotkey-pill {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        margin-bottom: 16px;
+      }
+
+      .ob-key {
+        background: rgba(255, 255, 255, 0.08);
+        border: 1px solid rgba(255, 255, 255, 0.18);
+        border-bottom: 3px solid rgba(255, 255, 255, 0.12);
+        border-radius: 6px;
+        padding: 6px 12px;
+        font-size: 14px;
+        font-weight: 600;
+        color: #e2d9f3;
+        font-family: inherit;
+        letter-spacing: 0.02em;
+      }
+
+      .ob-key-sep {
+        color: rgba(226, 217, 243, 0.4);
+        font-size: 16px;
+        font-weight: 300;
+      }
+
+      .ob-btn-primary {
+        background: linear-gradient(135deg, #c084fc 0%, #a855f7 100%);
+        color: #fff;
+        border: none;
+        border-radius: 8px;
+        padding: 14px 28px;
+        font-size: 15px;
+        font-weight: 600;
+        cursor: pointer;
+        font-family: inherit;
+        box-shadow:
+          0 2px 12px rgba(192, 132, 252, 0.4),
+          0 0 0 1px rgba(192, 132, 252, 0.2);
+        transition:
+          transform 0.12s,
+          box-shadow 0.12s;
+        margin-bottom: 14px;
+      }
+
+      .ob-btn-primary:hover {
+        transform: translateY(-1px);
+        box-shadow:
+          0 6px 20px rgba(192, 132, 252, 0.5),
+          0 0 0 1px rgba(192, 132, 252, 0.3);
+      }
+
+      .ob-btn-primary:active {
+        transform: translateY(0);
+      }
+
+      .ob-fine {
+        font-size: 12px;
+        color: rgba(226, 217, 243, 0.35);
+      }
+
+      .ob-skip {
+        font-size: 12px;
+        color: rgba(226, 217, 243, 0.35);
+        text-decoration: none;
+        cursor: pointer;
+        transition: color 0.15s;
+      }
+
+      .ob-skip:hover {
+        color: rgba(226, 217, 243, 0.6);
+      }
+
+      /* Pulsing mic animation */
+      .ob-mic-wrap {
+        position: relative;
+        width: 100px;
+        height: 100px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 28px;
+      }
+
+      .ob-mic-pulse {
+        position: absolute;
+        inset: 0;
+        border-radius: 50%;
+        border: 2px solid rgba(192, 132, 252, 0.4);
+        animation: obPulse 2s ease-out infinite;
+      }
+
+      .ob-pulse-2 {
+        animation-delay: 0.7s;
+      }
+
+      @keyframes obPulse {
+        0% {
+          transform: scale(0.85);
+          opacity: 0.8;
+        }
+        70% {
+          transform: scale(1.3);
+          opacity: 0;
+        }
+        100% {
+          transform: scale(1.3);
+          opacity: 0;
+        }
+      }
+
+      .ob-mic-inner {
+        width: 76px;
+        height: 76px;
+        border-radius: 50%;
+        background: rgba(192, 132, 252, 0.12);
+        border: 1px solid rgba(192, 132, 252, 0.3);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        z-index: 1;
+      }
+    </style>
 
     <script>
       // Nav routing
@@ -1150,6 +1760,113 @@
         });
       });
     </script>
+
+    <script>
+      // ── ONBOARDING FLOW ──
+      (function () {
+        var overlay = document.getElementById("onboarding-overlay");
+        var step1 = document.getElementById("ob-step-1");
+        var step2 = document.getElementById("ob-step-2");
+        var step3 = document.getElementById("ob-step-3");
+        var stepOk = document.getElementById("ob-step-success");
+
+        function showStep(el) {
+          [step1, step2, step3, stepOk].forEach(function (s) {
+            s.style.display = "none";
+          });
+          el.style.display = "flex";
+        }
+
+        function dismissOverlay() {
+          overlay.style.transition = "opacity 0.35s";
+          overlay.style.opacity = "0";
+          setTimeout(function () {
+            overlay.style.display = "none";
+          }, 360);
+          // Persist completion
+          try {
+            if (
+              window.electronAPI &&
+              window.electronAPI.setOnboardingComplete
+            ) {
+              window.electronAPI.setOnboardingComplete();
+            } else if (typeof require !== "undefined") {
+              require("electron").ipcRenderer.send("set-onboarding-complete");
+            }
+          } catch (e) {}
+          localStorage.setItem("hasCompletedOnboarding", "true");
+        }
+
+        function isFirstLaunch() {
+          if (localStorage.getItem("hasCompletedOnboarding") === "true")
+            return false;
+          // Also check via IPC if available
+          return true;
+        }
+
+        if (!isFirstLaunch()) return;
+
+        overlay.style.display = "flex";
+
+        // Step 1 → Step 2
+        document
+          .getElementById("ob-step1-next")
+          .addEventListener("click", function () {
+            // Sync hotkey label from settings if available
+            var hkInput = document.getElementById("hotkey-display");
+            if (hkInput && hkInput.value) {
+              var parts = hkInput.value.split("+");
+              var pill = document.getElementById("ob-hotkey-label");
+              pill.innerHTML = parts
+                .map(function (p, i) {
+                  return (
+                    (i > 0 ? '<span class="ob-key-sep">+</span>' : "") +
+                    '<span class="ob-key">' +
+                    p.trim() +
+                    "</span>"
+                  );
+                })
+                .join("");
+            }
+            showStep(step2);
+          });
+
+        // Step 2 → Step 3
+        document
+          .getElementById("ob-step2-next")
+          .addEventListener("click", function () {
+            showStep(step3);
+            // Auto-dismiss after 3 seconds (or on transcription-complete event)
+            var autoTimer = setTimeout(function () {
+              showStep(stepOk);
+              setTimeout(dismissOverlay, 1800);
+            }, 3000);
+
+            // Listen for real transcription completion
+            try {
+              if (typeof require !== "undefined") {
+                require("electron").ipcRenderer.once(
+                  "transcription-complete",
+                  function () {
+                    clearTimeout(autoTimer);
+                    showStep(stepOk);
+                    setTimeout(dismissOverlay, 1800);
+                  },
+                );
+              }
+            } catch (e) {}
+          });
+
+        // Skip link
+        document
+          .getElementById("ob-skip")
+          .addEventListener("click", function (e) {
+            e.preventDefault();
+            dismissOverlay();
+          });
+      })();
+    </script>
+
     <script src="settings.js"></script>
   </body>
 </html>
