@@ -12,7 +12,12 @@ const {
 } = require("electron");
 const path = require("path");
 const Store = require("electron-store");
-const { isTrialActive, isOwnerKey, checkRemoteTrial } = require("./trial");
+const {
+  isTrialActive,
+  isOwnerKey,
+  checkRemoteTrial,
+  validateLicenseKey,
+} = require("./trial");
 const { getMachineId } = require("./fingerprint");
 const { transcribeAudioBuffer } = require("./transcribe");
 const { injectText } = require("./inject");
@@ -198,13 +203,34 @@ function toggleRecording() {
   }
 }
 
+// Remove filler words from transcription text
+function removeFillerWords(text) {
+  const fillerPattern =
+    /\b(um+|uh+|like|you know|basically|literally|actually|so+)\b[,\s]*/gi;
+  return text
+    .replace(fillerPattern, " ")
+    .replace(/\s{2,}/g, " ")
+    .trim();
+}
+
 ipcMain.on("audio-ready", async (event, arrayBuffer) => {
   try {
     const prefs = store.get("preferences") || {};
     const apiKey = prefs.groqApiKey || undefined;
-    const text = await transcribeAudioBuffer(arrayBuffer, apiKey);
+    let text = await transcribeAudioBuffer(arrayBuffer, apiKey, prefs);
+
+    // Filler word removal
+    if (text && prefs.removeFiltersEnabled) {
+      text = removeFillerWords(text);
+    }
+
     if (text) {
-      await injectText(text);
+      // Auto-paste toggle: inject into active app or clipboard-only
+      if (prefs.autoPasteEnabled !== false) {
+        await injectText(text);
+      } else {
+        clipboard.writeText(text);
+      }
 
       // Store transcription in history
       const wordCount = text.trim().split(/\s+/).length;
@@ -267,6 +293,12 @@ ipcMain.on("audio-ready", async (event, arrayBuffer) => {
     if (tray && idleIcon) tray.setImage(idleIcon);
     overlayWindow = null;
     isRecording = false;
+
+    // Hands-free mode: auto-restart recording after a short pause
+    const prefsForHandsFree = store.get("preferences") || {};
+    if (prefsForHandsFree.handsFreeModeEnabled) {
+      setTimeout(() => toggleRecording(), 500);
+    }
   }
 });
 
