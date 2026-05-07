@@ -28,6 +28,9 @@ let overlayWindow = null;
 let isRecording = false;
 let tray = null;
 let settingsWindow = null;
+let idleIcon = null;
+let recordingIcon = null;
+let processingIcon = null;
 
 // Default preferences schema
 const defaultPreferences = {
@@ -181,12 +184,14 @@ function toggleRecording() {
 
   if (!isRecording) {
     isRecording = true;
+    if (tray && recordingIcon) tray.setImage(recordingIcon);
     const win = createOverlay();
     win.webContents.on("did-finish-load", () => {
       win.webContents.send("start-recording");
     });
   } else {
     isRecording = false;
+    if (tray && processingIcon) tray.setImage(processingIcon);
     if (overlayWindow && !overlayWindow.isDestroyed()) {
       overlayWindow.webContents.send("stop-recording");
     }
@@ -222,6 +227,32 @@ ipcMain.on("audio-ready", async (event, arrayBuffer) => {
       if (filtered.length !== transcriptions.length) {
         store.set("transcriptions", filtered);
       }
+
+      // Upgrade nudge after 10th and 20th dictation during trial
+      const count = (store.get("transcriptions") || []).length;
+      const installDate = store.get("installDate");
+      const prefs2 = store.get("preferences") || {};
+      const trialActive = isTrialActive(new Date(installDate));
+      const hasPaid = !!prefs2.licenseKey;
+      if (trialActive && !hasPaid && tray && tray.displayBalloon) {
+        if (count === 10 && !store.get("nudge10Shown")) {
+          store.set("nudge10Shown", true);
+          tray.displayBalloon({
+            title: "dictate.app is working for you",
+            content:
+              "You've dictated 10 times this trial. Upgrade to Pro to keep it going after day 7.",
+            iconType: "info",
+          });
+        } else if (count === 20 && !store.get("nudge20Shown")) {
+          store.set("nudge20Shown", true);
+          tray.displayBalloon({
+            title: "dictate.app — almost at your limit",
+            content:
+              "20 dictations in. Your trial ends in 7 days. Upgrade now to keep the streak.",
+            iconType: "info",
+          });
+        }
+      }
     }
 
     if (overlayWindow && !overlayWindow.isDestroyed()) {
@@ -233,6 +264,7 @@ ipcMain.on("audio-ready", async (event, arrayBuffer) => {
       overlayWindow.webContents.send("transcription-error", err.message);
     }
   } finally {
+    if (tray && idleIcon) tray.setImage(idleIcon);
     overlayWindow = null;
     isRecording = false;
   }
@@ -413,8 +445,14 @@ app.whenReady().then(async () => {
   }
 
   const iconPath = path.join(__dirname, "../../assets/tray-icon.png");
-  const icon = nativeImage.createFromPath(iconPath);
-  tray = new Tray(icon);
+  idleIcon = nativeImage.createFromPath(iconPath);
+  recordingIcon = nativeImage.createFromPath(
+    path.join(__dirname, "../../assets/tray-recording.png"),
+  );
+  processingIcon = nativeImage.createFromPath(
+    path.join(__dirname, "../../assets/tray-processing.png"),
+  );
+  tray = new Tray(idleIcon);
 
   const buildTrayMenu = () =>
     Menu.buildFromTemplate([
