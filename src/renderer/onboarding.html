@@ -1,0 +1,509 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'"
+    />
+    <title>Welcome to dictate.app</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      :root {
+        --bg: #0a0a0f;
+        --surface: rgba(255, 255, 255, 0.04);
+        --border: rgba(255, 255, 255, 0.08);
+        --accent: #c084fc;
+        --accent-dark: #a855f7;
+        --text: #e8dff5;
+        --text-sec: rgba(232, 223, 245, 0.6);
+        --text-muted: rgba(232, 223, 245, 0.35);
+      }
+
+      html,
+      body {
+        width: 100%;
+        height: 100%;
+        background: var(--bg);
+        color: var(--text);
+        font-family:
+          Inter,
+          -apple-system,
+          BlinkMacSystemFont,
+          "Segoe UI",
+          sans-serif;
+        font-size: 14px;
+        -webkit-font-smoothing: antialiased;
+        user-select: none;
+        overflow: hidden;
+      }
+
+      /* Drag region at top */
+      .drag-bar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 28px;
+        -webkit-app-region: drag;
+        z-index: 10;
+      }
+
+      /* Close button */
+      .close-btn {
+        position: fixed;
+        top: 9px;
+        right: 12px;
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        background: #ef4444;
+        border: none;
+        cursor: pointer;
+        opacity: 0.8;
+        z-index: 20;
+        -webkit-app-region: no-drag;
+        transition: opacity 0.15s;
+      }
+      .close-btn:hover {
+        opacity: 1;
+      }
+
+      /* Main container */
+      .container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 100vh;
+        padding: 28px 32px 24px;
+        position: relative;
+      }
+
+      /* Step wrapper */
+      .step {
+        display: none;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        width: 100%;
+        animation: stepIn 0.22s ease-out both;
+      }
+      .step.active {
+        display: flex;
+      }
+
+      @keyframes stepIn {
+        from {
+          opacity: 0;
+          transform: translateY(10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      /* Progress dots */
+      .dots {
+        display: flex;
+        gap: 6px;
+        margin-bottom: 32px;
+      }
+      .dot {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.15);
+        transition:
+          background 0.25s,
+          transform 0.25s;
+      }
+      .dot.active {
+        background: var(--accent);
+        transform: scale(1.3);
+      }
+
+      /* Icon circle */
+      .icon-wrap {
+        width: 72px;
+        height: 72px;
+        border-radius: 50%;
+        background: rgba(192, 132, 252, 0.1);
+        border: 1px solid rgba(192, 132, 252, 0.22);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 24px;
+      }
+
+      /* Pulsing mic for step 3 */
+      .mic-wrap {
+        position: relative;
+        width: 90px;
+        height: 90px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 24px;
+      }
+      .mic-pulse {
+        position: absolute;
+        inset: 0;
+        border-radius: 50%;
+        border: 2px solid rgba(192, 132, 252, 0.4);
+        animation: pulse 2s ease-out infinite;
+      }
+      .mic-pulse-2 {
+        animation-delay: 0.75s;
+      }
+      @keyframes pulse {
+        0% {
+          transform: scale(0.8);
+          opacity: 0.9;
+        }
+        70% {
+          transform: scale(1.35);
+          opacity: 0;
+        }
+        100% {
+          transform: scale(1.35);
+          opacity: 0;
+        }
+      }
+      .mic-inner {
+        width: 72px;
+        height: 72px;
+        border-radius: 50%;
+        background: rgba(192, 132, 252, 0.1);
+        border: 1px solid rgba(192, 132, 252, 0.25);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        z-index: 1;
+      }
+
+      /* Typography */
+      h1 {
+        font-size: 22px;
+        font-weight: 700;
+        letter-spacing: -0.03em;
+        line-height: 1.2;
+        margin-bottom: 10px;
+        color: var(--text);
+      }
+      p {
+        font-size: 13px;
+        color: var(--text-sec);
+        line-height: 1.6;
+        max-width: 320px;
+        margin-bottom: 28px;
+      }
+
+      /* Hotkey display */
+      .hotkey-display {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        margin-bottom: 12px;
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+      .key {
+        background: rgba(255, 255, 255, 0.07);
+        border: 1px solid rgba(255, 255, 255, 0.16);
+        border-bottom: 3px solid rgba(255, 255, 255, 0.1);
+        border-radius: 6px;
+        padding: 7px 13px;
+        font-size: 15px;
+        font-weight: 600;
+        color: var(--text);
+        font-family: inherit;
+        letter-spacing: 0.01em;
+      }
+      .key-sep {
+        color: var(--text-muted);
+        font-size: 18px;
+        font-weight: 300;
+      }
+      .hotkey-hint {
+        font-size: 12px;
+        color: var(--text-muted);
+        margin-bottom: 24px;
+      }
+
+      /* Demo textarea */
+      .demo-area {
+        width: 100%;
+        background: rgba(255, 255, 255, 0.04);
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        padding: 12px 16px;
+        color: var(--text-muted);
+        font-size: 13px;
+        font-family: inherit;
+        resize: none;
+        outline: none;
+        line-height: 1.5;
+        min-height: 60px;
+        margin-bottom: 22px;
+        cursor: default;
+      }
+
+      /* Primary button */
+      .btn-primary {
+        background: linear-gradient(
+          135deg,
+          var(--accent) 0%,
+          var(--accent-dark) 100%
+        );
+        color: #fff;
+        border: none;
+        border-radius: 8px;
+        padding: 13px 28px;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        font-family: inherit;
+        box-shadow:
+          0 2px 12px rgba(192, 132, 252, 0.38),
+          0 0 0 1px rgba(192, 132, 252, 0.18);
+        transition:
+          transform 0.12s,
+          box-shadow 0.12s;
+        width: 100%;
+        margin-bottom: 10px;
+      }
+      .btn-primary:hover {
+        transform: translateY(-1px);
+        box-shadow:
+          0 6px 20px rgba(192, 132, 252, 0.48),
+          0 0 0 1px rgba(192, 132, 252, 0.28);
+      }
+      .btn-primary:active {
+        transform: translateY(0);
+      }
+
+      /* Fine print / skip */
+      .fine {
+        font-size: 11px;
+        color: var(--text-muted);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="drag-bar"></div>
+    <button class="close-btn" id="close-btn" title="Close"></button>
+
+    <div class="container">
+      <!-- Progress dots -->
+      <div class="dots">
+        <div class="dot active" id="dot-1"></div>
+        <div class="dot" id="dot-2"></div>
+        <div class="dot" id="dot-3"></div>
+      </div>
+
+      <!-- Step 1: Welcome -->
+      <div class="step active" id="step-1">
+        <div class="icon-wrap">
+          <svg
+            width="36"
+            height="36"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="#c084fc"
+            stroke-width="1.75"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <rect x="9" y="2" width="6" height="11" rx="3" />
+            <path d="M5 10a7 7 0 0 0 14 0" />
+            <line x1="12" y1="19" x2="12" y2="22" />
+            <line x1="8" y1="22" x2="16" y2="22" />
+          </svg>
+        </div>
+        <h1>dictate.app</h1>
+        <p>Press your hotkey. Speak. Text appears anywhere.</p>
+        <button class="btn-primary" id="step1-next">Set my hotkey →</button>
+        <span class="fine">7-day free trial · No account needed</span>
+      </div>
+
+      <!-- Step 2: Hotkey -->
+      <div class="step" id="step-2">
+        <div class="icon-wrap">
+          <svg
+            width="36"
+            height="36"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="#c084fc"
+            stroke-width="1.75"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <rect x="2" y="6" width="20" height="12" rx="2" />
+            <path d="M6 10h.01M10 10h.01M14 10h.01M18 10h.01M6 14h12" />
+          </svg>
+        </div>
+        <h1>Your hotkey</h1>
+        <div class="hotkey-display" id="hotkey-display">
+          <span class="key">Ctrl</span>
+          <span class="key-sep">+</span>
+          <span class="key">Space</span>
+        </div>
+        <p class="hotkey-hint">Press any key combo to change it</p>
+        <button class="btn-primary" id="step2-next">Looks good →</button>
+      </div>
+
+      <!-- Step 3: First dictation -->
+      <div class="step" id="step-3">
+        <div class="mic-wrap">
+          <div class="mic-pulse"></div>
+          <div class="mic-pulse mic-pulse-2"></div>
+          <div class="mic-inner">
+            <svg
+              width="32"
+              height="32"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="#c084fc"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <rect x="9" y="2" width="6" height="11" rx="3" />
+              <path d="M5 10a7 7 0 0 0 14 0" />
+              <line x1="12" y1="19" x2="12" y2="22" />
+              <line x1="8" y1="22" x2="16" y2="22" />
+            </svg>
+          </div>
+        </div>
+        <h1>Now try it</h1>
+        <p id="step3-subtext">
+          Press <span id="hotkey-label">Ctrl+Space</span> anywhere and speak.
+        </p>
+        <textarea
+          class="demo-area"
+          readonly
+          placeholder="Dictate into any app — this is just a demo"
+        ></textarea>
+        <button class="btn-primary" id="step3-done">I tried it →</button>
+      </div>
+    </div>
+
+    <script>
+      const { ipcRenderer } = require("electron");
+
+      // ── State ──────────────────────────────────────────────────────────────────
+      let currentStep = 1;
+      let capturedCombo = "Ctrl+Space";
+      let isCapturing = false;
+
+      // ── Helpers ────────────────────────────────────────────────────────────────
+      function showStep(n) {
+        document
+          .getElementById("step-" + currentStep)
+          .classList.remove("active");
+        document
+          .getElementById("dot-" + currentStep)
+          .classList.remove("active");
+        currentStep = n;
+        const el = document.getElementById("step-" + n);
+        // Re-trigger animation by cloning
+        const clone = el.cloneNode(true);
+        el.parentNode.replaceChild(clone, el);
+        clone.classList.add("active");
+        document.getElementById("dot-" + n).classList.add("active");
+        // Re-bind step-specific events after clone
+        bindStepEvents();
+      }
+
+      function renderHotkey(combo) {
+        const parts = combo.split("+");
+        const display = document.getElementById("hotkey-display");
+        if (!display) return;
+        display.innerHTML = parts
+          .map(
+            (p, i) =>
+              (i > 0 ? '<span class="key-sep">+</span>' : "") +
+              '<span class="key">' +
+              p.trim() +
+              "</span>",
+          )
+          .join("");
+      }
+
+      function buildCombo(e) {
+        const mods = [];
+        if (e.ctrlKey) mods.push("Ctrl");
+        if (e.altKey) mods.push("Alt");
+        if (e.shiftKey) mods.push("Shift");
+        if (e.metaKey) mods.push("Meta");
+        const key = e.code === "Space" ? "Space" : e.key;
+        // Skip modifier-only
+        if (["Control", "Alt", "Shift", "Meta"].includes(e.key)) return null;
+        if (mods.length === 0) return null;
+        return [...mods, key].join("+");
+      }
+
+      // ── Event binding (called after each showStep clone) ─────────────────────
+      function bindStepEvents() {
+        const s1next = document.getElementById("step1-next");
+        if (s1next) s1next.addEventListener("click", () => showStep(2));
+
+        const s2next = document.getElementById("step2-next");
+        if (s2next) {
+          s2next.addEventListener("click", () => {
+            ipcRenderer.send("save-hotkey", capturedCombo);
+            // Update step 3 label
+            const lbl = document.getElementById("hotkey-label");
+            if (lbl) lbl.textContent = capturedCombo;
+            showStep(3);
+          });
+        }
+
+        const s3done = document.getElementById("step3-done");
+        if (s3done) {
+          s3done.addEventListener("click", () => {
+            ipcRenderer.send("onboarding-complete");
+          });
+        }
+
+        const closeBtn = document.getElementById("close-btn");
+        if (closeBtn) {
+          closeBtn.addEventListener("click", () => {
+            ipcRenderer.send("onboarding-complete");
+          });
+        }
+      }
+
+      // ── Hotkey capture (step 2) ───────────────────────────────────────────────
+      document.addEventListener("keydown", (e) => {
+        if (currentStep !== 2) return;
+        e.preventDefault();
+        const combo = buildCombo(e);
+        if (!combo) return;
+        capturedCombo = combo;
+        renderHotkey(combo);
+      });
+
+      // ── Init ──────────────────────────────────────────────────────────────────
+      bindStepEvents();
+
+      // Load saved hotkey from main
+      ipcRenderer.on("current-hotkey", (_, hotkey) => {
+        if (hotkey) {
+          capturedCombo = hotkey;
+          renderHotkey(hotkey);
+        }
+      });
+      ipcRenderer.send("get-hotkey");
+    </script>
+  </body>
+</html>

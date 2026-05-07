@@ -309,6 +309,74 @@ ipcMain.on("get-stats", (event) => {
 });
 
 // ============================================================================
+// ONBOARDING WINDOW
+// ============================================================================
+
+function createOnboardingWindow() {
+  if (onboardingWindow && !onboardingWindow.isDestroyed()) {
+    onboardingWindow.focus();
+    return onboardingWindow;
+  }
+
+  const { width: screenWidth, height: screenHeight } =
+    screen.getPrimaryDisplay().workAreaSize;
+
+  onboardingWindow = new BrowserWindow({
+    width: 500,
+    height: 400,
+    x: Math.round((screenWidth - 500) / 2),
+    y: Math.round((screenHeight - 400) / 2),
+    frame: false,
+    transparent: false,
+    alwaysOnTop: true,
+    skipTaskbar: true,
+    resizable: false,
+    show: false,
+    webPreferences: {
+      nodeIntegration: true,
+      contextIsolation: false,
+    },
+  });
+
+  onboardingWindow.loadFile(
+    path.join(__dirname, "../renderer/onboarding.html"),
+  );
+  onboardingWindow.once("ready-to-show", () => {
+    onboardingWindow.show();
+    onboardingWindow.focus();
+    // Send current hotkey to renderer
+    const prefs = store.get("preferences") || {};
+    onboardingWindow.webContents.send(
+      "current-hotkey",
+      prefs.hotkey || "Ctrl+Space",
+    );
+  });
+
+  return onboardingWindow;
+}
+
+ipcMain.on("get-hotkey", (event) => {
+  const prefs = store.get("preferences") || {};
+  event.reply("current-hotkey", prefs.hotkey || "Ctrl+Space");
+});
+
+ipcMain.on("save-hotkey", (_, combo) => {
+  const prefs = store.get("preferences") || {};
+  prefs.hotkey = combo;
+  store.set("preferences", prefs);
+  updateHotkey(combo);
+});
+
+ipcMain.on("onboarding-complete", () => {
+  store.set("hasLaunched", true);
+  if (onboardingWindow && !onboardingWindow.isDestroyed()) {
+    onboardingWindow.close();
+    onboardingWindow = null;
+  }
+  createSettingsWindow();
+});
+
+// ============================================================================
 // SETTINGS WINDOW & IPC HANDLERS
 // ============================================================================
 
@@ -594,10 +662,9 @@ app.whenReady().then(async () => {
   setupHotkey(toggleRecording, savedHotkey);
   console.log("dictate.app running — hotkey:", savedHotkey);
 
-  // Show settings on first launch so users know the app is running
+  // Show onboarding on first launch; it will open settings when complete
   if (!store.get("hasLaunched")) {
-    store.set("hasLaunched", true);
-    createSettingsWindow();
+    createOnboardingWindow();
   }
 });
 
