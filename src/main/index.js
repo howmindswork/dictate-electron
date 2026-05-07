@@ -456,10 +456,25 @@ ipcMain.on("get-trial-info", (event) => {
   });
 });
 
-ipcMain.on("validate-license-key", (event, key) => {
+ipcMain.on("validate-license-key", async (event, key) => {
   const owner = isOwnerKey(key);
-  const valid = owner || (typeof key === "string" && key.trim().length > 8);
-  event.reply("license-key-validated", { valid, owner });
+  if (owner) {
+    const prefs = store.get("preferences") || defaultPreferences;
+    prefs.licenseKey = key.trim();
+    store.set("preferences", prefs);
+    updateTrayTooltip();
+    event.reply("license-key-validated", { valid: true, owner: true });
+    return;
+  }
+
+  const valid = await validateLicenseKey(key);
+  if (valid) {
+    const prefs = store.get("preferences") || defaultPreferences;
+    prefs.licenseKey = key.trim();
+    store.set("preferences", prefs);
+    updateTrayTooltip();
+  }
+  event.reply("license-key-validated", { valid, owner: false });
 });
 
 app.whenReady().then(async () => {

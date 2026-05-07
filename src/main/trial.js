@@ -18,8 +18,8 @@ function daysLeft(installDate) {
   return Math.max(0, remaining);
 }
 
-const TRIAL_WORKER_URL =
-  "https://trial-worker.howmindswork.workers.dev/api/check-trial";
+const TRIAL_WORKER_BASE = "https://trial-worker.howmindswork.workers.dev";
+const TRIAL_WORKER_URL = `${TRIAL_WORKER_BASE}/api/check-trial`;
 
 async function checkRemoteTrial(fingerprint) {
   try {
@@ -36,6 +36,26 @@ async function checkRemoteTrial(fingerprint) {
   }
 }
 
+async function validateLicenseKey(key) {
+  // Owner keys always pass without a network call
+  if (isOwnerKey(key)) return true;
+
+  try {
+    const res = await fetch(`${TRIAL_WORKER_BASE}/api/validate-license`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ key }),
+      signal: AbortSignal.timeout(5000),
+    });
+    if (!res.ok) return false;
+    const data = await res.json();
+    return data.valid === true;
+  } catch {
+    // Network failure — fall back to owner key check (already done above)
+    return false;
+  }
+}
+
 module.exports = {
   isTrialActive,
   daysLeft,
@@ -43,4 +63,5 @@ module.exports = {
   isOwnerKey,
   OWNER_KEYS,
   checkRemoteTrial,
+  validateLicenseKey,
 };
